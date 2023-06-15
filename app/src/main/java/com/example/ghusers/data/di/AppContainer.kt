@@ -8,6 +8,9 @@ import com.example.ghusers.data.repo.GithubUserRepositoryImpl
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 
 interface AppContainer {
     val githubRepoRepository: GithubRepoRepository
@@ -20,7 +23,12 @@ class AppContainerImpl : AppContainer {
     private val retrofit = Retrofit
         .Builder()
         .baseUrl(URL)
-        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+        .addConverterFactory(
+            GsonConverterFactory.create(
+                GsonBuilder()
+                    .create()
+            )
+        )
         .build()
 
     private val apiService: GithubApiService by lazy {

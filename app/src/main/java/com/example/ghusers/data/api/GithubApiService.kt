@@ -1,5 +1,6 @@
 package com.example.ghusers.data.api
 
+import com.example.ghusers.data.model.Repository
 import com.example.ghusers.data.model.User
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -10,6 +11,6 @@ interface GithubApiService {
     suspend fun getUsers(): List<User>
 
     @GET("users/{login}/repos")
-    suspend fun getUserRepos(@Path("login") login: String): List<String>
+    suspend fun getUserRepos(@Path("login") login: String): List<Repository>
 
 }

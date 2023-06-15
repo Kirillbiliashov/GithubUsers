@@ -32,5 +32,4 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() 
         }
     }
 
-
 }

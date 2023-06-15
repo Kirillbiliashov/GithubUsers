@@ -1,6 +1,7 @@
 package com.example.ghusers.ui.screens.users
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,10 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun UsersScreen(modifier: Modifier = Modifier) {
+fun UsersScreen(
+    onUserClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: UsersViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val uiState = viewModel.uiState.collectAsState()
     Column(
@@ -49,6 +53,7 @@ fun UsersScreen(modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .height(72.dp)
+                        .clickable { onUserClick(it.login) }
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
