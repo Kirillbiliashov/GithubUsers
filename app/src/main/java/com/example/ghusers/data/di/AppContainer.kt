@@ -5,6 +5,7 @@ import com.example.ghusers.data.repo.GithubRepoRepository
 import com.example.ghusers.data.repo.GithubRepoRepositoryImpl
 import com.example.ghusers.data.repo.GithubUserRepository
 import com.example.ghusers.data.repo.GithubUserRepositoryImpl
+import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -14,12 +15,12 @@ interface AppContainer {
 }
 
 class AppContainerImpl : AppContainer {
-    private val URL = "https://api.github.com/users/"
+    private val URL = "https://api.github.com/"
 
     private val retrofit = Retrofit
         .Builder()
         .baseUrl(URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
         .build()
 
     private val apiService: GithubApiService by lazy {

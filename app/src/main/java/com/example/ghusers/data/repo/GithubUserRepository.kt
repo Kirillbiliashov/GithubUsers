@@ -1,14 +1,15 @@
 package com.example.ghusers.data.repo
 
 import com.example.ghusers.data.api.GithubApiService
+import com.example.ghusers.data.model.User
 
 interface GithubUserRepository {
-    fun getAllUsers(): List<String>
+    suspend fun getAllUsers(): List<User>
 }
 
 class GithubUserRepositoryImpl(
     private val apiService: GithubApiService
 ) : GithubUserRepository {
-    override fun getAllUsers(): List<String> = apiService.getUsers()
+    override suspend fun getAllUsers(): List<User> = apiService.getUsers()
 }
 
