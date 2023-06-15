@@ -11,8 +11,15 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -26,57 +33,73 @@ import com.example.ghusers.ui.AppViewModelProvider
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReposScreen(modifier: Modifier = Modifier) {
+fun ReposScreen(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: ReposViewModel =
         viewModel(factory = AppViewModelProvider.Factory)
     val uiState = viewModel.uiState.collectAsState()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        LazyColumn {
-            items(items = uiState.value.repos, key = { it.name }) {
-                val parsedDate = remember(it.createdAt) {
-                    it.createdAt.toFormattedString()
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(text = viewModel.topBarTitle) },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
                 }
-                val descText = remember(it.description) {
-                    it.description ?: "No description provided."
-                }
-                Card(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .heightIn(min = 72.dp)
-                ) {
-                    Column(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
+            }
+        )
+    }) {
+        Column(
+            modifier = modifier
+                .padding(it)
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            LazyColumn {
+                items(items = uiState.value.repos, key = { it.name }) { repo ->
+                    val parsedDate = remember(repo.createdAt) {
+                        repo.createdAt.toFormattedString()
+                    }
+                    val descText = remember(repo.description) {
+                        repo.description ?: "No description provided."
+                    }
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .heightIn(min = 72.dp)
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = modifier
-                                .fillMaxWidth()
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
                         ) {
-                            Text(
-                                text = it.name,
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.W600,
-                                modifier = modifier.fillMaxWidth(0.6F)
-                            )
-                            Column(modifier = modifier.fillMaxHeight()) {
-                                Text(text = if (it.private) "Private" else "Public")
-                                Text(text = "Created: $parsedDate")
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = repo.name,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.W600,
+                                    modifier = Modifier.fillMaxWidth(0.6F)
+                                )
+                                Column(modifier = Modifier.fillMaxHeight()) {
+                                    Text(text = if (repo.private) "Private" else "Public")
+                                    Text(text = "Created: $parsedDate")
+                                }
                             }
+                            Text(text = descText, color = Color(111, 109, 109, 255))
                         }
-                        Text(text = descText, color = Color(111, 109, 109, 255))
                     }
                 }
             }
         }
     }
+
 }
 
 private fun Date.toFormattedString(): String {

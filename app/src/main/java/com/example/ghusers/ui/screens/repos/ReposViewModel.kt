@@ -22,12 +22,12 @@ class ReposViewModel(
 ) : ViewModel() {
 
     private val userLogin: String = checkNotNull(savedStateHandle["login"])
+    val topBarTitle = "$userLogin's repositories"
 
     private val _uiState = MutableStateFlow(ReposUIState())
     val uiState: StateFlow<ReposUIState> = _uiState
 
     init {
-        println("user login: $userLogin")
         loadApiRepos()
     }
 
