@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.screens.util.LoadingMessage
+import com.example.ghusers.ui.screens.util.PageBar
 import com.example.ghusers.ui.uimodel.UiRepository
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -53,7 +54,17 @@ fun ReposScreen(
                 }
             }
         )
-    }) {
+    },
+        bottomBar = {
+            PageBar(
+                currPage = uiState.value.currentPage,
+                onNextPageClick = viewModel::moveToNextPage,
+                onPrevPageClick = viewModel::moveToPrevPage,
+                isLastPage = !uiState.value.hasNextPage,
+                isFirstPage = !uiState.value.hasPrevPage
+            )
+        }) {
+
         Column(
             modifier = modifier
                 .padding(it)

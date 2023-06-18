@@ -7,6 +7,8 @@ import com.example.ghusers.data.db.entity.DbUser
 import com.example.ghusers.data.db.entity.toUiUser
 import com.example.ghusers.data.repo.GithubUserRepository
 import com.example.ghusers.ui.screens.util.LoadState
+import com.example.ghusers.ui.screens.util.PageableUIState
+import com.example.ghusers.ui.screens.util.PageableViewModel
 import com.example.ghusers.ui.uimodel.UiUser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,29 +17,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
-
-private const val USERS_PER_PAGE = 7
-
 data class UsersUIState(
-    private val _users: List<UiUser> = listOf(),
-    val currentPage: Int = 1,
+    override val data: List<UiUser> = listOf(),
+    override val currentPage: Int = 1,
     val loadState: LoadState = LoadState.LOADING_CACHE
-) {
+) : PageableUIState<UiUser>() {
     val users: List<UiUser>
-        get() =
-            if (_users.size < USERS_PER_PAGE) _users else
-                _users.subList(
-                    (currentPage - 1) * USERS_PER_PAGE,
-                    min(currentPage * USERS_PER_PAGE, _users.size)
-                )
-    val hasPrevPage: Boolean
-        get() = currentPage > 1
-    val hasNextPage: Boolean
-        get() = _users.size > currentPage * USERS_PER_PAGE
+        get() = pagedDataView()
 }
 
 
-class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() {
+class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(), PageableViewModel {
 
     private val _uiState = MutableStateFlow(UsersUIState())
     val uiState: StateFlow<UsersUIState> = _uiState
@@ -52,7 +42,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() 
             val dbUsers = usersRepo.getAllCached()
             _uiState.update {
                 it.copy(
-                    _users = dbUsers.map(DbUser::toUiUser),
+                    data = dbUsers.map(DbUser::toUiUser),
                     loadState = LoadState.LOADED
                 )
             }
@@ -66,7 +56,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() 
                 val apiData = usersRepo.getAllUsers()
                 _uiState.update {
                     it.copy(
-                        _users = apiData.map { user -> user.toUiUser() },
+                        data = apiData.map { user -> user.toUiUser() },
                         loadState = LoadState.LOADED
                     )
                 }
@@ -76,12 +66,12 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() 
         }
     }
 
-    fun moveToNextPage() {
+    override fun moveToNextPage() {
         val currentPage = _uiState.value.currentPage
         _uiState.update { it.copy(currentPage = currentPage + 1) }
     }
 
-    fun moveToPrevPage() {
+    override fun moveToPrevPage() {
         val currentPage = _uiState.value.currentPage
         _uiState.update { it.copy(currentPage = currentPage - 1) }
     }

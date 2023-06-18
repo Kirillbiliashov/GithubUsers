@@ -9,22 +9,33 @@ import com.example.ghusers.data.db.entity.DbRepository
 import com.example.ghusers.data.db.entity.toUiRepository
 import com.example.ghusers.data.repo.GithubRepoRepository
 import com.example.ghusers.ui.screens.util.LoadState
+import com.example.ghusers.ui.screens.util.PageableUIState
+import com.example.ghusers.ui.screens.util.PageableViewModel
 import com.example.ghusers.ui.uimodel.UiRepository
+import com.example.ghusers.ui.uimodel.UiUser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.min
+
+private const val REPOS_PER_PAGE = 10
 
 data class ReposUIState(
-    val repos: List<UiRepository> = listOf(),
-    val loadState: LoadState = LoadState.LOADING_CACHE
-)
+    override val data: List<UiRepository> = listOf(),
+    val loadState: LoadState = LoadState.LOADING_CACHE,
+    override val currentPage: Int = 1
+) : PageableUIState<UiRepository>() {
+    val repos: List<UiRepository>
+        get() = pagedDataView()
+}
+
 
 class ReposViewModel(
     savedStateHandle: SavedStateHandle,
     private val githubRepoRepository: GithubRepoRepository
-) : ViewModel() {
+) : ViewModel(), PageableViewModel {
 
     private val userLogin: String = checkNotNull(savedStateHandle["login"])
     val topBarTitle = "$userLogin's repositories"
@@ -42,7 +53,7 @@ class ReposViewModel(
             val dbData = githubRepoRepository.getAllCached(userLogin)
             _uiState.update {
                 it.copy(
-                    repos = dbData.map(DbRepository::toUiRepository),
+                    data = dbData.map(DbRepository::toUiRepository),
                     loadState = LoadState.LOADED
                 )
             }
@@ -56,7 +67,7 @@ class ReposViewModel(
                 val apiData = githubRepoRepository.getAllApiRepos(userLogin)
                 _uiState.update {
                     it.copy(
-                        repos = apiData.map(ApiRepository::toUiRepository),
+                        data = apiData.map(ApiRepository::toUiRepository),
                         loadState = LoadState.LOADED
                     )
                 }
@@ -64,6 +75,16 @@ class ReposViewModel(
                 _uiState.update { it.copy(loadState = LoadState.LOADED) }
             }
         }
+    }
+
+    override fun moveToNextPage() {
+        val currentPage = _uiState.value.currentPage
+        _uiState.update { it.copy(currentPage = currentPage + 1) }
+    }
+
+    override fun moveToPrevPage() {
+        val currentPage = _uiState.value.currentPage
+        _uiState.update { it.copy(currentPage = currentPage - 1) }
     }
 
 }
