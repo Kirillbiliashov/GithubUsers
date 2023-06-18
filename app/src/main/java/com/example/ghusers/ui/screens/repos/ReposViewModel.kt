@@ -5,15 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ghusers.data.api.model.ApiRepository
 import com.example.ghusers.data.api.model.toUiRepository
+import com.example.ghusers.data.db.entity.DbRepository
+import com.example.ghusers.data.db.entity.toUiRepository
 import com.example.ghusers.data.repo.GithubRepoRepository
+import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.uimodel.UiRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ReposUIState(
-    val repos: List<UiRepository> = listOf()
+    val repos: List<UiRepository> = listOf(),
+    val loadState: LoadState = LoadState.LOADING_CACHE
 )
 
 class ReposViewModel(
@@ -28,15 +33,38 @@ class ReposViewModel(
     val uiState: StateFlow<ReposUIState> = _uiState
 
     init {
+        loadDbRepos()
         loadApiRepos()
+    }
+
+    private fun loadDbRepos() {
+        viewModelScope.launch {
+            delay(10000)
+            val dbData = githubRepoRepository.getAllCached(userLogin)
+            _uiState.update {
+                it.copy(
+                    repos = dbData.map(DbRepository::toUiRepository),
+                    loadState = LoadState.LOADED
+                )
+            }
+        }
     }
 
     private fun loadApiRepos() {
         viewModelScope.launch {
-            val apiData = githubRepoRepository.getAllRepos(userLogin)
-            _uiState.update {
-                it.copy(repos = apiData.map(ApiRepository::toUiRepository))
+            _uiState.update { it.copy(loadState = LoadState.LOADING_SERVER) }
+            try {
+                val apiData = githubRepoRepository.getAllApiRepos(userLogin)
+                _uiState.update {
+                    it.copy(
+                        repos = apiData.map(ApiRepository::toUiRepository),
+                        loadState = LoadState.LOADED
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(loadState = LoadState.LOADED) }
             }
         }
     }
+
 }

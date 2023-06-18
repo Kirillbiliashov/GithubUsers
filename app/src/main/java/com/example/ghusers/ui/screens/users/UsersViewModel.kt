@@ -2,13 +2,12 @@ package com.example.ghusers.ui.screens.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ghusers.data.api.model.ApiUser
 import com.example.ghusers.data.api.model.toUiUser
 import com.example.ghusers.data.db.entity.DbUser
 import com.example.ghusers.data.db.entity.toUiUser
 import com.example.ghusers.data.repo.GithubUserRepository
+import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.uimodel.UiUser
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

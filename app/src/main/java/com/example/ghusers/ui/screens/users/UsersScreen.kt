@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -29,9 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ghusers.data.api.model.ApiUser
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.navigation.Destinations
+import com.example.ghusers.ui.screens.util.LoadState
+import com.example.ghusers.ui.screens.util.LoadingMessage
 import com.example.ghusers.ui.uimodel.UiUser
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -60,15 +60,6 @@ fun UsersScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun LoadingMessage(message: String,
-    modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = message, fontSize = 20.sp)
     }
 }
 

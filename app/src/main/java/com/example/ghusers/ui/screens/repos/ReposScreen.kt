@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ghusers.ui.AppViewModelProvider
+import com.example.ghusers.ui.screens.util.LoadState
+import com.example.ghusers.ui.screens.util.LoadingMessage
+import com.example.ghusers.ui.uimodel.UiRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -57,44 +60,51 @@ fun ReposScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            LazyColumn {
-                items(items = uiState.value.repos, key = { it.name }) { repo ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .heightIn(min = 72.dp)
+            when (uiState.value.loadState) {
+                LoadState.LOADING_CACHE -> LoadingMessage("Loading repos from cache")
+                LoadState.LOADING_SERVER -> LoadingMessage("Loading repos from server")
+                LoadState.LOADED -> ReposList(repos = uiState.value.repos)
+            }
+        }
+    }
+}
+
+@Composable
+fun ReposList(repos: List<UiRepository>, modifier: Modifier = Modifier) {
+    LazyColumn {
+        items(items = repos, key = { it.name }) { repo ->
+            Card(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .heightIn(min = 72.dp)
+            ) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = modifier.fillMaxWidth()
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = repo.name,
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.W600,
-                                    modifier = Modifier.fillMaxWidth(0.6F)
-                                )
-                                Column(modifier = Modifier.fillMaxHeight()) {
-                                    Text(text = if (repo.private) "Private" else "Public")
-                                    Text(text = "Created: ${repo.dateStr}")
-                                }
-                            }
-                            Text(
-                                text = repo.descriptionText,
-                                color = Color(111, 109, 109, 255)
-                            )
+                        Text(
+                            text = repo.name,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.W600,
+                            modifier = Modifier.fillMaxWidth(0.6F)
+                        )
+                        Column(modifier = Modifier.fillMaxHeight()) {
+                            Text(text = if (repo.private) "Private" else "Public")
+                            Text(text = "Created: ${repo.dateStr}")
                         }
                     }
+                    Text(
+                        text = repo.descriptionText,
+                        color = Color(111, 109, 109, 255)
+                    )
                 }
             }
         }
     }
-
 }

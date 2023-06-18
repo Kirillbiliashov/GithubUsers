@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.example.ghusers.data.api.model.ApiUser
 import com.example.ghusers.data.api.model.toDBRepository
 import com.example.ghusers.data.api.model.toDBUser
 import com.example.ghusers.ui.navigation.NavGraph
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 userRepository.refreshUserCache(dbUsers)
                 apiUsers.forEach { user ->
                     launch {
-                        val repos = repoRepository.getAllRepos(user.login)
+                        val repos = repoRepository.getAllApiRepos(user.login)
                         val dbRepos = repos.map { it.toDBRepository(user) }
                         repoRepository.refreshReposCache(dbRepos)
                     }

@@ -3,6 +3,8 @@ package com.example.ghusers.data.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.example.ghusers.ui.uimodel.UiRepository
+import com.example.ghusers.utils.AppUtils.toFormattedString
 import java.util.Date
 
 @Entity(
@@ -22,4 +24,11 @@ data class DbRepository(
     val createdAt: Date,
     @ColumnInfo(name = "user_login")
     val userLogin: String
+)
+
+fun DbRepository.toUiRepository() = UiRepository(
+    name = name,
+    dateStr = createdAt.toFormattedString(),
+    descriptionText = description ?: "No description provided.",
+    private = private
 )
