@@ -22,7 +22,7 @@ data class UsersUIState(
     override val currentPage: Int = 1,
     val loadState: LoadState = LoadState.LOADING_CACHE,
     val userMessage: String? = null
-) : PageableUIState<UiUser>(itemsPerPage = 8) {
+) : PageableUIState<UiUser>() {
     val users: List<UiUser>
         get() = pagedDataView()
 }

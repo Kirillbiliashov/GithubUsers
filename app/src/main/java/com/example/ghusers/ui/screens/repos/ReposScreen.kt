@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -21,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -74,15 +76,23 @@ fun ReposScreen(
             when (uiState.value.loadState) {
                 LoadState.LOADING_CACHE -> LoadingMessage("Loading repos from cache")
                 LoadState.LOADING_SERVER -> LoadingMessage("Loading repos from server")
-                LoadState.LOADED -> ReposList(repos = uiState.value.repos)
+                LoadState.LOADED -> ReposList(
+                    repos = uiState.value.repos,
+                    currentPage = uiState.value.currentPage
+                )
             }
         }
     }
 }
 
 @Composable
-fun ReposList(repos: List<UiRepository>, modifier: Modifier = Modifier) {
-    LazyColumn {
+fun ReposList(repos: List<UiRepository>, currentPage: Int,
+              modifier: Modifier = Modifier) {
+    val state = rememberLazyListState()
+    LaunchedEffect(currentPage) {
+        state.animateScrollToItem(0)
+    }
+    LazyColumn(state = state) {
         items(items = repos, key = { it.name }) { repo ->
             Card(
                 modifier = modifier

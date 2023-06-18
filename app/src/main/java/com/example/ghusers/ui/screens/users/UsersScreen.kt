@@ -96,6 +96,7 @@ fun UsersScreen(
                 LoadState.LOADING_SERVER -> LoadingMessage("Loading users from server")
                 LoadState.LOADED -> UsersList(
                     users = uiState.value.users,
+                    currentPage = uiState.value.currentPage,
                     onUserClick = onUserClick
                 )
             }
@@ -106,10 +107,15 @@ fun UsersScreen(
 @Composable
 fun UsersList(
     users: List<UiUser>,
+    currentPage: Int,
     onUserClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn {
+    val state = rememberLazyListState()
+    LaunchedEffect(currentPage) {
+        state.animateScrollToItem(0)
+    }
+    LazyColumn(state = state) {
         items(items = users, key = { it.login }) {
             Card(
                 modifier = modifier
