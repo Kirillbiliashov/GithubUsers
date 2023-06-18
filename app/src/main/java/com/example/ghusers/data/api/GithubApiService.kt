@@ -1,7 +1,7 @@
 package com.example.ghusers.data.api
 
-import com.example.ghusers.data.model.ApiRepository
-import com.example.ghusers.data.model.ApiUser
+import com.example.ghusers.data.api.model.ApiRepository
+import com.example.ghusers.data.api.model.ApiUser
 import retrofit2.http.GET
 import retrofit2.http.Path
 

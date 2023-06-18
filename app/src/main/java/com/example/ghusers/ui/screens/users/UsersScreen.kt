@@ -1,7 +1,6 @@
 package com.example.ghusers.ui.screens.users
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ghusers.data.model.ApiUser
+import com.example.ghusers.data.api.model.ApiUser
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.navigation.Destinations
+import com.example.ghusers.ui.uimodel.UiUser
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -52,10 +52,10 @@ fun UsersScreen(
                 .padding(16.dp)
         ) {
             when (uiState.value.loadState) {
-                LoadState.LOADING -> LoadingMessage()
-                LoadState.ERROR -> ErrorMessage(onButtonClick = viewModel::loadGithubUsersFromApi)
+                LoadState.LOADING_CACHE -> LoadingMessage("Loading users from cache")
+                LoadState.LOADING_SERVER -> LoadingMessage("Loading users from server")
                 LoadState.LOADED -> UsersList(
-                    users = uiState.value.apiUsers,
+                    users = uiState.value.users,
                     onUserClick = onUserClick
                 )
             }
@@ -64,35 +64,23 @@ fun UsersScreen(
 }
 
 @Composable
-fun LoadingMessage(modifier: Modifier = Modifier) {
+fun LoadingMessage(message: String,
+    modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Loading users", fontSize = 20.sp)
+        Text(text = message, fontSize = 20.sp)
     }
 }
 
-@Composable
-fun ErrorMessage(
-    onButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Network connection issue. Check your network connection and try again")
-        Spacer(modifier = modifier.width(24.dp))
-        Button(onClick = onButtonClick) {
-            Text(text = "Retry")
-        }
-    }
-}
 
 @Composable
 fun UsersList(
-    users: List<ApiUser>,
+    users: List<UiUser>,
     onUserClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn {
-        items(items = users, key = { it.id }) {
+        items(items = users, key = { it.login }) {
             Card(
                 modifier = modifier
                     .fillMaxWidth()

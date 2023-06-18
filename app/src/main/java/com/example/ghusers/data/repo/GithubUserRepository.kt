@@ -1,14 +1,16 @@
 package com.example.ghusers.data.repo
 
 import com.example.ghusers.data.api.GithubApiService
-import com.example.ghusers.data.dao.UserDao
-import com.example.ghusers.data.entity.User
-import com.example.ghusers.data.model.ApiUser
+import com.example.ghusers.data.db.dao.UserDao
+import com.example.ghusers.data.db.entity.DbUser
+import com.example.ghusers.data.api.model.ApiUser
 
 interface GithubUserRepository {
     suspend fun getAllUsers(): List<ApiUser>
 
-    suspend fun refreshUserCache(users: List<User>)
+    suspend fun getAllCached(): List<DbUser>
+
+    suspend fun refreshUserCache(dbUsers: List<DbUser>)
 }
 
 class GithubUserRepositoryImpl(
@@ -16,9 +18,12 @@ class GithubUserRepositoryImpl(
     private val userDao: UserDao
 ) : GithubUserRepository {
     override suspend fun getAllUsers(): List<ApiUser> = apiService.getUsers()
-    override suspend fun refreshUserCache(users: List<User>) {
+
+    override suspend fun getAllCached() = userDao.getAll()
+
+    override suspend fun refreshUserCache(dbUsers: List<DbUser>) {
         userDao.deleteUsers()
-        userDao.insertUsers(users)
+        userDao.insertUsers(dbUsers)
     }
 
 }

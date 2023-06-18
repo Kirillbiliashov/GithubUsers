@@ -59,12 +59,6 @@ fun ReposScreen(
         ) {
             LazyColumn {
                 items(items = uiState.value.repos, key = { it.name }) { repo ->
-                    val parsedDate = remember(repo.createdAt) {
-                        repo.createdAt.toFormattedString()
-                    }
-                    val descText = remember(repo.description) {
-                        repo.description ?: "No description provided."
-                    }
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -89,10 +83,13 @@ fun ReposScreen(
                                 )
                                 Column(modifier = Modifier.fillMaxHeight()) {
                                     Text(text = if (repo.private) "Private" else "Public")
-                                    Text(text = "Created: $parsedDate")
+                                    Text(text = "Created: ${repo.dateStr}")
                                 }
                             }
-                            Text(text = descText, color = Color(111, 109, 109, 255))
+                            Text(
+                                text = repo.descriptionText,
+                                color = Color(111, 109, 109, 255)
+                            )
                         }
                     }
                 }
@@ -100,9 +97,4 @@ fun ReposScreen(
         }
     }
 
-}
-
-private fun Date.toFormattedString(): String {
-    val dateFormat = SimpleDateFormat("dd.MM.yy")
-    return dateFormat.format(this)
 }

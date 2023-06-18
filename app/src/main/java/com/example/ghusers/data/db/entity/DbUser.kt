@@ -1,13 +1,15 @@
-package com.example.ghusers.data.entity
+package com.example.ghusers.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import com.example.ghusers.ui.uimodel.UiUser
 
 @Entity(tableName = "user")
-data class User(
+data class DbUser(
     @PrimaryKey
     val login: String,
     val avatarUrl: String
 )
+
+fun DbUser.toUiUser() = UiUser(login, avatarUrl)
 

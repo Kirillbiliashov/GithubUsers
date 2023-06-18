@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.example.ghusers.data.model.ApiUser
-import com.example.ghusers.data.model.toDBRepository
-import com.example.ghusers.data.model.toDBUser
+import com.example.ghusers.data.api.model.ApiUser
+import com.example.ghusers.data.api.model.toDBRepository
+import com.example.ghusers.data.api.model.toDBUser
 import com.example.ghusers.ui.navigation.NavGraph
 import com.example.ghusers.ui.theme.GHUsersTheme
 import kotlinx.coroutines.launch
