@@ -39,7 +39,6 @@ class ReposViewModel(
 
     private fun loadDbRepos() {
         viewModelScope.launch {
-            delay(10000)
             val dbData = githubRepoRepository.getAllCached(userLogin)
             _uiState.update {
                 it.copy(
