@@ -1,6 +1,5 @@
 package com.example.ghusers.ui.screens.users
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,14 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.Glide
-import com.example.ghusers.R
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.navigation.Destinations
 import com.skydoves.landscapist.ImageOptions
@@ -54,7 +49,7 @@ fun UsersScreen(
                 .padding(16.dp)
         ) {
             LazyColumn {
-                items(items = uiState.value.users, key = { it.id }) {
+                items(items = uiState.value.apiUsers, key = { it.id }) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

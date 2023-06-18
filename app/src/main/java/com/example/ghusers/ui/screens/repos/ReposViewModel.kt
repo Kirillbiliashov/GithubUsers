@@ -3,17 +3,15 @@ package com.example.ghusers.ui.screens.repos
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ghusers.data.model.Repository
-import com.example.ghusers.data.model.User
+import com.example.ghusers.data.model.ApiRepository
 import com.example.ghusers.data.repo.GithubRepoRepository
-import com.example.ghusers.ui.screens.users.UsersUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ReposUIState(
-    val repos: List<Repository> = listOf()
+    val repos: List<ApiRepository> = listOf()
 )
 
 class ReposViewModel(

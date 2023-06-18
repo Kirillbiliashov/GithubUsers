@@ -1,6 +1,8 @@
 package com.example.ghusers.data.di
 
+import android.content.Context
 import com.example.ghusers.data.api.GithubApiService
+import com.example.ghusers.data.db.AppDatabase
 import com.example.ghusers.data.repo.GithubRepoRepository
 import com.example.ghusers.data.repo.GithubRepoRepositoryImpl
 import com.example.ghusers.data.repo.GithubUserRepository
@@ -15,10 +17,13 @@ import java.util.Date
 interface AppContainer {
     val githubRepoRepository: GithubRepoRepository
     val githubUserRepository: GithubUserRepository
+    
 }
 
-class AppContainerImpl : AppContainer {
+class AppContainerImpl(context: Context) : AppContainer {
     private val URL = "https://api.github.com/"
+
+    private val db = AppDatabase.getDatabase(context)
 
     private val retrofit = Retrofit
         .Builder()
@@ -36,11 +41,11 @@ class AppContainerImpl : AppContainer {
     }
 
     override val githubRepoRepository by lazy {
-        GithubRepoRepositoryImpl(apiService)
+        GithubRepoRepositoryImpl(apiService, db.repositoryDao())
     }
 
     override val githubUserRepository by lazy {
-        GithubUserRepositoryImpl(apiService)
+        GithubUserRepositoryImpl(apiService, db.userDao())
     }
 
 }
