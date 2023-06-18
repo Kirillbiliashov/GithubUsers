@@ -32,24 +32,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        val app = this.application as GithubUsersApplication
-        val userRepository = app.container.githubUserRepository
-        val repoRepository = app.container.githubRepoRepository
-        lifecycleScope.launch {
-            val apiUsers = userRepository.getAllUsers()
-            val dbUsers = apiUsers.map { it.toDBUser() }
-            userRepository.refreshUserCache(dbUsers)
-            apiUsers.forEach { user ->
-                launch {
-                    val repos = repoRepository.getAllRepos(user.login)
-                    val dbRepos = repos.map { it.toDBRepository(user) }
-                    repoRepository.refreshReposCache(dbRepos)
-                }
-            }
-        }
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        val app = this.application as GithubUsersApplication
+//        val userRepository = app.container.githubUserRepository
+//        val repoRepository = app.container.githubRepoRepository
+//        lifecycleScope.launch {
+//            val apiUsers = userRepository.getAllUsers()
+//            val dbUsers = apiUsers.map { it.toDBUser() }
+//            userRepository.refreshUserCache(dbUsers)
+//            apiUsers.forEach { user ->
+//                launch {
+//                    val repos = repoRepository.getAllRepos(user.login)
+//                    val dbRepos = repos.map { it.toDBRepository(user) }
+//                    repoRepository.refreshReposCache(dbRepos)
+//                }
+//            }
+//        }
+//    }
 }
 
 @Preview(showBackground = true)

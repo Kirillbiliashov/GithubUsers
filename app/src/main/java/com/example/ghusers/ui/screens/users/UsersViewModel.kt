@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class UsersUIState(
-    val apiUsers: List<ApiUser> = listOf()
+    val apiUsers: List<ApiUser> = listOf(),
+    val loadState: LoadState = LoadState.LOADING
 )
 
 
@@ -23,16 +24,15 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() 
         loadGithubUsersFromApi()
     }
 
-    private fun loadGithubUsersFromApi() {
+    fun loadGithubUsersFromApi() {
         viewModelScope.launch {
-            val apiData = usersRepo.getAllUsers()
-            _uiState.update { it.copy(apiUsers = apiData) }
+            try {
+                val apiData = usersRepo.getAllUsers()
+                _uiState.update { it.copy(apiUsers = apiData, loadState = LoadState.LOADED) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(loadState = LoadState.ERROR) }
+            }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        println("on cleared")
     }
 
 }
