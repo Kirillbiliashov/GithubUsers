@@ -20,8 +20,9 @@ import kotlin.math.min
 data class UsersUIState(
     override val data: List<UiUser> = listOf(),
     override val currentPage: Int = 1,
-    val loadState: LoadState = LoadState.LOADING_CACHE
-) : PageableUIState<UiUser>() {
+    val loadState: LoadState = LoadState.LOADING_CACHE,
+    val userMessage: String? = null
+) : PageableUIState<UiUser>(itemsPerPage = 8) {
     val users: List<UiUser>
         get() = pagedDataView()
 }
@@ -33,37 +34,47 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
     val uiState: StateFlow<UsersUIState> = _uiState
 
     init {
-        loadGithubUsersFromCache()
-        loadGithubUsersFromApi()
+        viewModelScope.launch {
+            loadGithubUsersFromCache()
+            loadGithubUsersFromApi()
+
+        }
+
     }
 
-    private fun loadGithubUsersFromCache() {
-        viewModelScope.launch {
-            val dbUsers = usersRepo.getAllCached()
+    private suspend fun loadGithubUsersFromCache() {
+        val dbUsers = usersRepo.getAllCached()
+        _uiState.update {
+            it.copy(
+                data = dbUsers.map(DbUser::toUiUser),
+                loadState = LoadState.LOADED
+            )
+        }
+
+    }
+
+    private suspend fun loadGithubUsersFromApi() {
+        _uiState.update { it.copy(loadState = LoadState.LOADING_SERVER) }
+        try {
+            val apiData = usersRepo.getAllUsers()
             _uiState.update {
                 it.copy(
-                    data = dbUsers.map(DbUser::toUiUser),
+                    data = apiData.map { user -> user.toUiUser() },
                     loadState = LoadState.LOADED
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(
+                    loadState = LoadState.LOADED,
+                    userMessage = "Unable to load data from server, so cached data is dispalyed instead"
                 )
             }
         }
     }
 
-    private fun loadGithubUsersFromApi() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(loadState = LoadState.LOADING_SERVER) }
-            try {
-                val apiData = usersRepo.getAllUsers()
-                _uiState.update {
-                    it.copy(
-                        data = apiData.map { user -> user.toUiUser() },
-                        loadState = LoadState.LOADED
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(loadState = LoadState.LOADED) }
-            }
-        }
+    fun clearSnackbarMessage() {
+        _uiState.update { it.copy(userMessage = null) }
     }
 
     override fun moveToNextPage() {

@@ -44,36 +44,34 @@ class ReposViewModel(
     val uiState: StateFlow<ReposUIState> = _uiState
 
     init {
-        loadDbRepos()
-        loadApiRepos()
-    }
-
-    private fun loadDbRepos() {
         viewModelScope.launch {
-            val dbData = githubRepoRepository.getAllCached(userLogin)
-            _uiState.update {
-                it.copy(
-                    data = dbData.map(DbRepository::toUiRepository),
-                    loadState = LoadState.LOADED
-                )
-            }
+            loadDbRepos()
+            loadApiRepos()
         }
     }
 
-    private fun loadApiRepos() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(loadState = LoadState.LOADING_SERVER) }
-            try {
-                val apiData = githubRepoRepository.getAllApiRepos(userLogin)
-                _uiState.update {
-                    it.copy(
-                        data = apiData.map(ApiRepository::toUiRepository),
-                        loadState = LoadState.LOADED
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(loadState = LoadState.LOADED) }
+    private suspend fun loadDbRepos() {
+        val dbData = githubRepoRepository.getAllCached(userLogin)
+        _uiState.update {
+            it.copy(
+                data = dbData.map(DbRepository::toUiRepository),
+                loadState = LoadState.LOADED
+            )
+        }
+    }
+
+    private suspend fun loadApiRepos() {
+        _uiState.update { it.copy(loadState = LoadState.LOADING_SERVER) }
+        try {
+            val apiData = githubRepoRepository.getAllApiRepos(userLogin)
+            _uiState.update {
+                it.copy(
+                    data = apiData.map(ApiRepository::toUiRepository),
+                    loadState = LoadState.LOADED
+                )
             }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(loadState = LoadState.LOADED) }
         }
     }
 
