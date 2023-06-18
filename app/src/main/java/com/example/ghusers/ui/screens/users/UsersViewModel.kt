@@ -67,7 +67,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
             _uiState.update {
                 it.copy(
                     loadState = LoadState.LOADED,
-                    userMessage = "Unable to load data from server, so cached data is dispalyed instead"
+                    userMessage = "Unable to load data from server, so cached data is displayed instead"
                 )
             }
         }

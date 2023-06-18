@@ -14,6 +14,8 @@ import com.example.ghusers.data.api.model.toDBRepository
 import com.example.ghusers.data.api.model.toDBUser
 import com.example.ghusers.ui.navigation.NavGraph
 import com.example.ghusers.ui.theme.GHUsersTheme
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -46,13 +48,12 @@ class MainActivity : ComponentActivity() {
             if (apiUsers.isNotEmpty()) {
                 val dbUsers = apiUsers.map { it.toDBUser() }
                 userRepository.refreshUserCache(dbUsers)
-                apiUsers.forEach { user ->
-                    launch {
-                        val repos = repoRepository.getAllApiRepos(user.login)
-                        val dbRepos = repos.map { it.toDBRepository(user) }
-                        repoRepository.refreshReposCache(dbRepos)
-                    }
-                }
+                val dbRepos = apiUsers
+                    .map { async { repoRepository.getAllApiRepos(it.login) } }
+                    .awaitAll()
+                    .flatten()
+                    .map { it.toDBRepository() }
+                repoRepository.refreshReposCache(dbRepos)
             }
         }
     }

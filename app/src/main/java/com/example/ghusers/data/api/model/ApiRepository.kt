@@ -11,7 +11,9 @@ data class ApiRepository(
     val private: Boolean,
     val description: String?,
     @SerializedName("created_at")
-    val createdAt: Date
+    val createdAt: Date,
+    @SerializedName("owner")
+    val user: ApiUser
 )
 
 fun ApiRepository.toUiRepository() = UiRepository(
@@ -21,7 +23,7 @@ fun ApiRepository.toUiRepository() = UiRepository(
     private = private
 )
 
-fun ApiRepository.toDBRepository(user: ApiUser) = DbRepository(
+fun ApiRepository.toDBRepository() = DbRepository(
     name = name,
     private = private,
     description = description,
