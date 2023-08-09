@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.example.ghusers.data.api.model.toDBRepository
-import com.example.ghusers.data.api.model.toDBUser
 import com.example.ghusers.ui.navigation.NavGraph
 import com.example.ghusers.ui.theme.GHUsersTheme
 import kotlinx.coroutines.async
@@ -34,36 +32,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        val app = this.application as GithubUsersApplication
-        val userRepository = app.container.githubUserRepository
-        val repoRepository = app.container.githubRepoRepository
-        lifecycleScope.launch {
-            val apiUsers = try {
-                userRepository.getAllUsers()
-            } catch (e: Exception) {
-                listOf()
-            }
-            if (apiUsers.isNotEmpty()) {
-                val dbUsers = apiUsers.map { it.toDBUser() }
-                userRepository.refreshUserCache(dbUsers)
-                val dbRepos = apiUsers
-                    .map { async { repoRepository.getAllApiRepos(it.login) } }
-                    .awaitAll()
-                    .flatten()
-                    .map { it.toDBRepository() }
-                repoRepository.refreshReposCache(dbRepos)
-            }
-        }
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GHUsersTheme {
-
-    }
 }

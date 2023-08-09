@@ -1,6 +1,5 @@
 package com.example.ghusers.ui.screens.repos
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,20 +23,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ghusers.data.model.Repository
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.screens.util.LoadingMessage
 import com.example.ghusers.ui.screens.util.PageBar
-import com.example.ghusers.ui.uimodel.UiRepository
-import java.text.SimpleDateFormat
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +82,7 @@ fun ReposScreen(
 }
 
 @Composable
-fun ReposList(repos: List<UiRepository>, currentPage: Int,
+fun ReposList(repos: List<Repository>, currentPage: Int,
               modifier: Modifier = Modifier) {
     val state = rememberLazyListState()
     LaunchedEffect(currentPage) {
@@ -117,11 +113,11 @@ fun ReposList(repos: List<UiRepository>, currentPage: Int,
                         )
                         Column(modifier = Modifier.fillMaxHeight()) {
                             Text(text = if (repo.private) "Private" else "Public")
-                            Text(text = "Created: ${repo.dateStr}")
+                            Text(text = "Created: ${repo.createdAt.toString()}")
                         }
                     }
                     Text(
-                        text = repo.descriptionText,
+                        text = repo.description ?: "No description",
                         color = Color(111, 109, 109, 255)
                     )
                 }

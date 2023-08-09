@@ -1,16 +1,16 @@
 package com.example.ghusers.data.api
 
-import com.example.ghusers.data.api.model.ApiRepository
-import com.example.ghusers.data.api.model.ApiUser
+import com.example.ghusers.data.model.Repository
+import com.example.ghusers.data.model.User
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface GithubApiService {
 
     @GET("users")
-    suspend fun getUsers(): List<ApiUser>
+    suspend fun getUsers(): List<User>
 
     @GET("users/{login}/repos")
-    suspend fun getUserRepos(@Path("login") login: String): List<ApiRepository>
+    suspend fun getUserRepos(@Path("login") login: String): List<Repository>
 
 }

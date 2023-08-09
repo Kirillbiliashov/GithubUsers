@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.ghusers.data.db.dao.RepositoryDao
 import com.example.ghusers.data.db.dao.UserDao
-import com.example.ghusers.data.db.entity.DbRepository
-import com.example.ghusers.data.db.entity.DbUser
+import com.example.ghusers.data.model.Repository
+import com.example.ghusers.data.model.RepositoryUser
+import com.example.ghusers.data.model.User
 
-@Database(version = 1, entities = [DbRepository::class, DbUser::class])
+@Database(version = 2, entities = [Repository::class, User::class, RepositoryUser::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

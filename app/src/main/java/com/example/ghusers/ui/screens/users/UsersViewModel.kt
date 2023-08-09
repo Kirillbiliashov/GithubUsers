@@ -2,28 +2,23 @@ package com.example.ghusers.ui.screens.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ghusers.data.api.model.toUiUser
-import com.example.ghusers.data.db.entity.DbUser
-import com.example.ghusers.data.db.entity.toUiUser
+import com.example.ghusers.data.model.User
 import com.example.ghusers.data.repo.GithubUserRepository
 import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.screens.util.PageableUIState
 import com.example.ghusers.ui.screens.util.PageableViewModel
-import com.example.ghusers.ui.uimodel.UiUser
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.min
 
 data class UsersUIState(
-    override val data: List<UiUser> = listOf(),
+    override val data: List<User> = listOf(),
     override val currentPage: Int = 1,
     val loadState: LoadState = LoadState.LOADING_CACHE,
     val userMessage: String? = null
-) : PageableUIState<UiUser>() {
-    val users: List<UiUser>
+) : PageableUIState<User>() {
+    val users: List<User>
         get() = pagedDataView()
 }
 
@@ -46,7 +41,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
         val dbUsers = usersRepo.getAllCached()
         _uiState.update {
             it.copy(
-                data = dbUsers.map(DbUser::toUiUser),
+                data = dbUsers,
                 loadState = LoadState.LOADED
             )
         }
@@ -59,7 +54,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
             val apiData = usersRepo.getAllUsers()
             _uiState.update {
                 it.copy(
-                    data = apiData.map { user -> user.toUiUser() },
+                    data = apiData,
                     loadState = LoadState.LOADED
                 )
             }
