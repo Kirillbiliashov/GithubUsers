@@ -5,25 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.ghusers.data.model.User
 import com.example.ghusers.data.repo.GithubUserRepository
 import com.example.ghusers.ui.screens.util.LoadState
-import com.example.ghusers.ui.screens.util.PageableUIState
-import com.example.ghusers.ui.screens.util.PageableViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class UsersUIState(
-    override val data: List<User> = listOf(),
-    override val currentPage: Int = 1,
+    val users: List<User> = listOf(),
     val loadState: LoadState = LoadState.LOADING_CACHE,
     val userMessage: String? = null
-) : PageableUIState<User>() {
-    val users: List<User>
-        get() = pagedDataView()
-}
+)
 
-
-class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(), PageableViewModel {
+class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsersUIState())
     val uiState: StateFlow<UsersUIState> = _uiState
@@ -41,7 +34,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
         val dbUsers = usersRepo.getAllCached()
         _uiState.update {
             it.copy(
-                data = dbUsers,
+                users = dbUsers,
                 loadState = LoadState.LOADED
             )
         }
@@ -53,7 +46,7 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
             val apiData = usersRepo.getAllUsers()
             _uiState.update {
                 it.copy(
-                    data = apiData,
+                    users = apiData,
                     loadState = LoadState.LOADED
                 )
             }
@@ -69,16 +62,6 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
 
     fun clearSnackbarMessage() {
         _uiState.update { it.copy(userMessage = null) }
-    }
-
-    override fun moveToNextPage() {
-        val currentPage = _uiState.value.currentPage
-        _uiState.update { it.copy(currentPage = currentPage + 1) }
-    }
-
-    override fun moveToPrevPage() {
-        val currentPage = _uiState.value.currentPage
-        _uiState.update { it.copy(currentPage = currentPage - 1) }
     }
 
 }

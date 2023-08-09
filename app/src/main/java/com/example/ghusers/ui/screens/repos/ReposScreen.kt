@@ -62,22 +62,15 @@ fun ReposScreen(
             when (uiState.value.loadState) {
                 LoadState.LOADING_CACHE -> LoadingMessage("Loading repos from cache")
                 LoadState.LOADING_SERVER -> LoadingMessage("Loading repos from server")
-                LoadState.LOADED -> ReposList(
-                    repos = uiState.value.repos,
-                    currentPage = uiState.value.currentPage
-                )
+                LoadState.LOADED -> ReposList(repos = uiState.value.repos)
             }
         }
     }
 }
 
 @Composable
-fun ReposList(repos: List<Repository>, currentPage: Int,
-              modifier: Modifier = Modifier) {
+fun ReposList(repos: List<Repository>, modifier: Modifier = Modifier) {
     val state = rememberLazyListState()
-    LaunchedEffect(currentPage) {
-        state.animateScrollToItem(0)
-    }
     LazyColumn(state = state) {
         items(items = repos, key = { it.name }) { repo ->
             Card(
