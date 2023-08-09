@@ -11,7 +11,4 @@ class GithubUsersApplication : Application() {
         container = AppContainerImpl(this)
     }
 
-
-
-
 }

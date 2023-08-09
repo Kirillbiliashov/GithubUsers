@@ -33,7 +33,6 @@ import com.example.ghusers.data.model.Repository
 import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.screens.util.LoadingMessage
-import com.example.ghusers.ui.screens.util.PageBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,16 +51,7 @@ fun ReposScreen(
                 }
             }
         )
-    },
-        bottomBar = {
-            PageBar(
-                currPage = uiState.value.currentPage,
-                onNextPageClick = viewModel::moveToNextPage,
-                onPrevPageClick = viewModel::moveToPrevPage,
-                isLastPage = !uiState.value.hasNextPage,
-                isFirstPage = !uiState.value.hasPrevPage
-            )
-        }) {
+    }) {
 
         Column(
             modifier = modifier

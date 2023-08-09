@@ -45,7 +45,6 @@ class UsersViewModel(private val usersRepo: GithubUserRepository) : ViewModel(),
                 loadState = LoadState.LOADED
             )
         }
-
     }
 
     private suspend fun loadGithubUsersFromApi() {

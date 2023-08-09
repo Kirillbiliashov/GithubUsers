@@ -40,7 +40,6 @@ import com.example.ghusers.ui.AppViewModelProvider
 import com.example.ghusers.ui.navigation.Destinations
 import com.example.ghusers.ui.screens.util.LoadState
 import com.example.ghusers.ui.screens.util.LoadingMessage
-import com.example.ghusers.ui.screens.util.PageBar
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.CoroutineScope
@@ -58,16 +57,7 @@ fun UsersScreen(
     val uiState = viewModel.uiState.collectAsState()
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = { TopAppBar(title = { Text(text = Destinations.HOME) }) },
-        bottomBar = {
-            PageBar(
-                currPage = uiState.value.currentPage,
-                onNextPageClick = viewModel::moveToNextPage,
-                onPrevPageClick = viewModel::moveToPrevPage,
-                isLastPage = !uiState.value.hasNextPage,
-                isFirstPage = !uiState.value.hasPrevPage
-            )
-        }) {
+        topBar = { TopAppBar(title = { Text(text = Destinations.HOME) }) }) {
         uiState.value.userMessage?.let {
             coroutineScope.launch {
                 snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
